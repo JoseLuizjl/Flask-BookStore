@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, url_for
 from books_api import get_book
 from flask_bcrypt import Bcrypt, check_password_hash
 from database.database import User, session as db_session
@@ -8,15 +8,27 @@ app.config['SECRET_KEY'] = 'secret_key'
 bcrypt = Bcrypt(app)
 
 
-@app.route('/', methods=['GET', "POST"])
-def index():
-    if request.method == "POST":
-        book = request.form['bookInput']
-        title, author, categories, bookImage = get_book(book)
+from flask import Flask, render_template, request
+from books_api import get_book
 
-        return render_template('index.html', title=title, author=author, 
-                            categories=categories, bookImage=bookImage)
-    return render_template('index.html')
+app = Flask(__name__)
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        book = request.form['search']
+        return redirect(url_for('index', search=book))
+
+    search = request.args.get('search')
+    search_results = get_book([search]) if search else []
+
+    books_name = ['Programming Python', 'Little Prince', 'Crime and Punishment', 'Dracula',
+                  'Frankenstein', 'The Metamorphosis', 'Think Python']
+    carousel_books = get_book(books_name)
+
+    return render_template('index.html', carousel_books=carousel_books, search_results=search_results)
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
