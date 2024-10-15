@@ -2,8 +2,8 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine("mysql+pymysql://joseluiz:senha976@localhost:3306/banco_dados")
-conn = engine.connect()
+engine = create_engine("dialect://username:password@host:port/database")
+
 
 Base = declarative_base()
 
